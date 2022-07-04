@@ -67,9 +67,15 @@ const main = () => {
 
   makeDirIfNotExist(filepath);
 
-  for (let time = 0; time < loopTimes; time++) {
+  let time = 0;
+  const loop = setInterval(() => {
     saveRandomImages(url, filepath);
-  }
+    time++;
+    console.log(time);
+    if (time === loopTimes) {
+      clearInterval(loop);
+    }
+  }, 1000);
 };
 
 main();
