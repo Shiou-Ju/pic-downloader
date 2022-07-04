@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import { Stream } from 'stream';
 import axios from 'axios';
 import { program } from 'commander';
+import { v4 as uuidv4 } from 'uuid';
 
 const makeDirIfNotExist = async (filepath: string) => {
   if (!fs.existsSync(filepath)) {
@@ -14,7 +15,7 @@ const saveRandomImages = async (
   filepath: string,
   times: number
 ) => {
-  for (let time = 0; time <= times; time++) {
+  for (let time = 0; time < times; time++) {
     const response = await axios({
       url,
       method: 'GET',
@@ -23,7 +24,8 @@ const saveRandomImages = async (
 
     const file = response.data as Stream;
 
-    const fileName = `${filepath}/${new Date()}.jpeg`;
+    const id = uuidv4();
+    const fileName = `${filepath}/${id}.jpeg`;
 
     new Promise((resolve, reject) => {
       file
