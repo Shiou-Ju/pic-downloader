@@ -14,7 +14,7 @@ const saveRandomImages = async (
   filepath: string,
   times: number
 ) => {
-  for (let time = 0; time < times; time++) {
+  for (let time = 0; time <= times; time++) {
     const response = await axios({
       url,
       method: 'GET',
@@ -38,20 +38,29 @@ const saveRandomImages = async (
 
 const main = () => {
   program
-    .requiredOption('--url <string>', '')
-    .option('--filepath <string>', '', `${__dirname}/pics`);
+    .requiredOption('--url <string>', 'Url to get')
+    .option(
+      '--filepath <string>',
+      'Filepath to save the pic',
+      `${__dirname}/pics`
+    )
+    .option('--looptimes <number>', 'Pics to get', Number, 1);
 
   program.parse(process.argv);
 
   const options = program.opts();
-  const { url, filepath } = options;
+  const { url, filepath, looptimes: loopTimes } = options;
+
+  if (!Number.isInteger(loopTimes)) {
+    throw new Error('loop times is not an integer');
+  }
 
   if (!url) {
     throw new Error('no url');
   }
 
   makeDirIfNotExist(filepath);
-  saveRandomImages(url, filepath, 1);
+  saveRandomImages(url, filepath, loopTimes);
 };
 
 main();
