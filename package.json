@@ -1,0 +1,18 @@
+{
+  "name": "save-pic",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Shiou-Ju/pic-downloader.git",
+  "author": "Shiou-Ju <75402531+Shiou-Ju@users.noreply.github.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsc && node dist/index.js"
+  },
+  "dependencies": {
+    "axios": "^0.27.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.1",
+    "typescript": "^4.7.4"
+  }
+}
