@@ -1,11 +1,9 @@
-import axios from 'axios';
 import * as fs from 'fs';
 import { Stream } from 'stream';
+import axios from 'axios';
+import { program } from 'commander';
 
-const url = '';
-const filepath = `${__dirname}/pics`;
-
-const makeDirIfNotExist = async () => {
+const makeDirIfNotExist = async (filepath: string) => {
   if (!fs.existsSync(filepath)) {
     fs.mkdirSync(filepath);
   }
@@ -39,8 +37,21 @@ const saveRandomImages = async (
 };
 
 const main = () => {
+  program
+    .requiredOption('--url <string>', '')
+    .option('--filepath <string>', '', `${__dirname}/pics`);
+
+  program.parse(process.argv);
+
+  const options = program.opts();
+  const { url, filepath } = options;
+
+  if (!url) {
+    throw new Error('no url');
+  }
+
+  makeDirIfNotExist(filepath);
   saveRandomImages(url, filepath, 1);
-  makeDirIfNotExist();
 };
 
 main();
