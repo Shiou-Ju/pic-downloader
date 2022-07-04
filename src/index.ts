@@ -10,35 +10,29 @@ const makeDirIfNotExist = async (filepath: string) => {
   }
 };
 
-const saveRandomImages = async (
-  url: string,
-  filepath: string,
-  times: number
-) => {
-  for (let time = 0; time < times; time++) {
-    const response = await axios({
-      url,
-      method: 'GET',
-      responseType: 'stream',
-    });
+const saveRandomImages = async (url: string, filepath: string) => {
+  const response = await axios({
+    url,
+    method: 'GET',
+    responseType: 'stream',
+  });
 
-    const file = response.data as Stream;
+  const file = response.data as Stream;
 
-    const id = uuidv4();
-    const fileName = `${filepath}/${id}.jpeg`;
+  const id = uuidv4();
+  const fileName = `${filepath}/${id}.jpeg`;
 
-    new Promise((resolve, reject) => {
-      file
-        .pipe(fs.createWriteStream(fileName))
-        .on('error', reject)
-        .once('close', () => {
-          resolve(filepath);
-        });
-    });
-  }
+  new Promise((resolve, reject) => {
+    file
+      .pipe(fs.createWriteStream(fileName))
+      .on('error', reject)
+      .once('close', () => {
+        resolve(filepath);
+      });
+  });
 };
 
-const main = () => {
+const generateCommandOptions = () => {
   program
     .requiredOption('--url <string>', 'Url to get')
     .option(
@@ -51,8 +45,11 @@ const main = () => {
   program.parse(process.argv);
 
   const options = program.opts();
-  const { url, filepath, looptimes: loopTimes } = options;
 
+  return options;
+};
+
+const validateUrlAndLoopTimes = (loopTimes: number, url: string) => {
   if (!Number.isInteger(loopTimes)) {
     throw new Error('loop times is not an integer');
   }
@@ -60,9 +57,19 @@ const main = () => {
   if (!url) {
     throw new Error('no url');
   }
+};
+
+const main = () => {
+  const options = generateCommandOptions();
+  const { url, filepath, looptimes: loopTimes } = options;
+
+  validateUrlAndLoopTimes(loopTimes, url);
 
   makeDirIfNotExist(filepath);
-  saveRandomImages(url, filepath, loopTimes);
+
+  for (let time = 0; time < loopTimes; time++) {
+    saveRandomImages(url, filepath);
+  }
 };
 
 main();
