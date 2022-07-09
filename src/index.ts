@@ -40,7 +40,13 @@ const generateCommandOptions = () => {
       'Filepath to save the pic',
       `${__dirname}/pics`
     )
-    .option('--looptimes <number>', 'Pics to get', Number, 1);
+    .option('--looptimes <number>', 'Pics to get', Number, 1)
+    .option(
+      '--interval <number>',
+      'Interval in seconds between retrieval',
+      Number,
+      1
+    );
 
   program.parse(process.argv);
 
@@ -61,7 +67,12 @@ const validateUrlAndLoopTimes = (loopTimes: number, url: string) => {
 
 const main = () => {
   const options = generateCommandOptions();
-  const { url, filepath, looptimes: loopTimes } = options;
+  const {
+    url,
+    filepath,
+    looptimes: loopTimes,
+    interval: timeIntervalInSecond,
+  } = options;
 
   validateUrlAndLoopTimes(loopTimes, url);
 
@@ -71,11 +82,11 @@ const main = () => {
   const loop = setInterval(() => {
     saveRandomImages(url, filepath);
     time++;
-    console.log(time);
+    console.log(`執行完第 ${time} 次，剩餘 ${loopTimes - time} 次`);
     if (time === loopTimes) {
       clearInterval(loop);
     }
-  }, 1000);
+  }, timeIntervalInSecond * 1000);
 };
 
 main();
